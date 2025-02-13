@@ -1,36 +1,20 @@
-
+<!-- index.html -->
 <!DOCTYPE html>
 <html>
 <head>
-    <title>手机版SOL预售页</title>
-    <!-- 引入Solana官方库 -->
-    <script src="https://unpkg.com/@solana/web3.js@1.70.1/lib/index.iife.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: Arial; text-align: center; padding: 20px; }
-        button { padding: 15px; background: #14F195; color: black; border: none; border-radius: 10px; }
-    </style>
+    <title>SOL预售页面</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>🔗 手机创建SOL预售页</h1>
-    <button onclick="connectWallet()">点击连接Phantom钱包</button>
-    
-    <script>
-        async function connectWallet() {
-            // 检查是否安装了Phantom钱包
-            if (window.solana && window.solana.isPhantom) {
-                try {
-                    await window.solana.connect(); // 请求连接
-                    const publicKey = window.solana.publicKey.toString();
-                    alert("连接成功！钱包地址:\n" + publicKey.slice(0,10) + "...");
-                } catch (error) {
-                    alert("用户拒绝了连接");
-                }
-            } else {
-                alert("请先安装Phantom钱包！");
-                window.open("https://phantom.app/download"); // 跳转下载页面
-            }
-        }
-    </script>
+    <div class="container">
+        <h1>项目名称预售</h1>
+        <p>预售价格：1 SOL = 100代币</p>
+        <p>倒计时：24小时</p>
+        <button id="connectButton">连接钱包</button>
+        <button id="buyButton" disabled>立即购买</button>
+        <div id="message"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.41.0/lib/index.iife.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
