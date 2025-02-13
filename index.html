@@ -1,20 +1,31 @@
-<!-- index.html -->
-<!DOCTYPE html>
-<html>
-<head>
-    <title>SOL预售页面</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <h1>项目名称预售</h1>
-        <p>预售价格：1 SOL = 100代币</p>
-        <p>倒计时：24小时</p>
-        <button id="connectButton">连接钱包</button>
-        <button id="buyButton" disabled>立即购买</button>
-        <div id="message"></div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.41.0/lib/index.iife.min.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+<h3>预售价格：1 SOL = 1000代币</h3>
+<button onclick="sendSOL()" style="background:#9945FF;">支付1 SOL参与</button>
+
+<script>
+async function sendSOL() {
+    const provider = window.solana;
+    if (!provider?.isConnected) {
+        alert("请先连接钱包！");
+        return;
+    }
+
+    // 替换成你的钱包地址（在Phantom中点击"Deposit"复制）
+    const YOUR_WALLET = "替换成你的SOL地址";
+    
+    try {
+        const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("mainnet-beta"));
+        const transaction = new solanaWeb3.Transaction().add(
+            solanaWeb3.SystemProgram.transfer({
+                fromPubkey: provider.publicKey,
+                toPubkey: new solanaWeb3.PublicKey(YOUR_WALLET),
+                lamports: solanaWeb3.LAMPORTS_PER_SOL // 1 SOL = 1,000,000,000 lamports
+            })
+        );
+        
+        const { signature } = await provider.signAndSendTransaction(transaction);
+        alert("支付成功！交易哈希:\n" + signature);
+    } catch (error) {
+        alert("支付失败: " + error.message);
+    }
+}
+</script>
