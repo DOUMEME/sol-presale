@@ -1,25 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SOL预售页面</title>
-    <script src="https://unpkg.com/@solana/web3.js@1.70.1/lib/index.iife.min.js"></script>
-    <script src="https://unpkg.com/@solana/wallet-adapter-phantom@0.9.11/lib/solana-wallet-adapter-phantom.min.js"></script>
+    <title>手机版SOL预售页</title>
+    <!-- 引入Solana官方库 -->
+    <script src="https://unpkg.com/@solana/web3.js@1.70.1/lib/index.iife.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial; text-align: center; padding: 20px; }
+        button { padding: 15px; background: #14F195; color: black; border: none; border-radius: 10px; }
+    </style>
 </head>
 <body>
-    <h1>欢迎参加预售！</h1>
-    <button onclick="connectWallet()">连接钱包</button>
+    <h1>🔗 手机创建SOL预售页</h1>
+    <button onclick="connectWallet()">点击连接Phantom钱包</button>
+    <h3>预售价格：1 SOL = 1000代币</h3>
+<button onclick="sendSOL()" style="background:#9945FF;">支付1 SOL参与</button>
+
+<script>
+async function sendSOL() {
+    const provider = window.solana;
+    if (!provider?.isConnected) {
+        alert("请先连接钱包！");
+        return;
+    }
+
+    // 替换成你的钱包地址（在Phantom中点击"Deposit"复制）
+    const YOUR_WALLET = "6Cz2zYG5u9PBRQkfUswUZxdq5yiwo9dDfYJ6wjYkhjeB";
+    
+    try {
+        const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("mainnet-beta"));
+        const transaction = new solanaWeb3.Transaction().add(
+            solanaWeb3.SystemProgram.transfer({
+                fromPubkey: provider.publicKey,
+                toPubkey: new solanaWeb3.PublicKey(YOUR_WALLET),
+                lamports: solanaWeb3.LAMPORTS_PER_SOL // 1 SOL = 1,000,000,000 lamports
+            })
+        );
+        
+        const { signature } = await provider.signAndSendTransaction(transaction);
+        alert("支付成功！交易哈希:\n" + signature);
+    } catch (error) {
+        alert("支付失败: " + error.message);
+    }
+}
+</script>
     <script>
         async function connectWallet() {
-            if (window.solana?.isPhantom) {
-                const wallet = window.solana;
+            // 检查是否安装了Phantom钱包
+            if (window.solana && window.solana.isPhantom) {
                 try {
-                    await wallet.connect();
-                    alert("已连接钱包: " + wallet.publicKey.toString());
-                } catch (err) {
-                    alert("连接失败: " + err.message);
+                    await window.solana.connect(); // 请求连接
+                    const publicKey = window.solana.publicKey.toString();
+                    alert("连接成功！钱包地址:\n" + publicKey.slice(0,10) + "...");
+                } catch (error) {
+                    alert("用户拒绝了连接");
                 }
             } else {
-                alert("请安装Phantom钱包！");
+                alert("请先安装Phantom钱包！");
+                window.open("https://phantom.app/download"); // 跳转下载页面
             }
         }
     </script>
